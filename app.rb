@@ -2,6 +2,7 @@ require './book'
 require './student'
 require './teacher'
 require './person'
+require './rental'
 
 class App
   include Inputs
@@ -33,13 +34,13 @@ class App
     elsif task == '7'
       puts 'Thank you for using this app!'
     else
-      puts 'Please select a valid choice from the list'
+      puts 'Please select a valid number'
       run
     end
   end
 
   def display_options
-    puts 'Please choose an option by entering a number:'
+    puts 'Please choose an option:'
     puts '1 - List all books'
     puts '2 - List all people'
     puts '3 - Create a person'
@@ -128,6 +129,16 @@ class App
   end
 
   def list_rentals
-  end
+    print 'ID of person: '
+    id = gets.chomp.to_i
+    puts 'Rentals: '
+    @people.each do |person|
+      next unless person.id == id
 
+      person.rentals.each do |rental|
+        puts %(Date: #{rental.date}, Book \"#{rental.book.title}\" by #{rental.book.author})
+        restart_app
+      end
+    end
+  end
 end 
