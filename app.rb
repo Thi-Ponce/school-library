@@ -11,9 +11,8 @@ class App
     @books = []
     @id = 0
   end
-  
-  attr_accessor :persons, :books
 
+  attr_accessor :persons, :books
 
   def run
     puts 'Welcome to School Library App!'
@@ -53,7 +52,7 @@ class App
   def list_all_books
     puts "\n"
     books.each_with_index do |book, index|
-    puts "[#{index + 1}] Title: #{book.title}, Author: #{book.author}"
+      puts "[#{index + 1}] Title: #{book.title}, Author: #{book.author}"
     end
   end
 
@@ -141,4 +140,4 @@ class App
       end
     end
   end
-end 
+end
