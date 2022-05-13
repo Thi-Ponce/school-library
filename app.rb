@@ -21,6 +21,45 @@ class App
   end
 
   def create_person
+    print 'Do you want to create a student (1) or a teacher (2)? [Input the number]: '
+    person_selected = gets.chomp.strip.to_i
+
+    case person_selected
+    when 1
+      create_student
+    when 2
+      create_teacher
+    else
+      puts 'Invalid Selection. Returning to main menu'
+      nil
+    end
+    puts "Person created successfully\n\n"
+  end
+
+  def create_student
+    age = numeric(message: "Age:\s")
+    name = not_empty(message: "Name:\s")
+    loop do
+      print "Has parent permission [Y/N]?\s"
+      permission = gets.chomp
+      if %w[y Y].include?(permission)
+        student = Student.new(nil, age, name: name, parent_permission: true)
+        @people << student unless @people.include?(student)
+        break
+      elsif %w[n N].include?(permission)
+        student = Student.new(nil, age, name: name, parent_permission: false)
+        @people << student unless @people.include?(student)
+        break
+      end
+    end
+  end
+
+  def create_teacher
+    age = numeric(message: "Age:\s")
+    name = not_empty(message: "Name:\s")
+    specialization = not_empty(message: "Specialization:\s")
+    teacher = Teacher.new(specialization, age, name: name)
+    @people << teacher unless @people.include?(teacher)
   end
 
   def create_book
