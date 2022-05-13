@@ -1,18 +1,14 @@
-require './book'
-require './student'
-require './teacher'
-require './person'
-require './rental'
+require_relative './book'
+require_relative './student'
+require_relative './teacher'
+require_relative './rental'
 
 class App
-  include Inputs
   def initialize
     @people = []
     @books = []
     @id = 0
   end
-
-  attr_accessor :persons, :books
 
   def run
     puts 'Welcome to School Library App!'
@@ -45,13 +41,26 @@ class App
     puts '3 - Create a person'
     puts '4 - Create a book'
     puts '5 - Create a rental'
-    puts '6 - List all rentals for a given person id'
+    puts '6 - List all rentals'
     puts '7 - Exit'
+  end
+
+  def restart
+    puts 'Restart for more options? y/n'
+    key = gets.chomp
+    case key
+    when 'y'
+      run
+    when 'n'
+      puts 'Thank you for using the app, see you later!'
+    else
+      puts 'Unknown command'
+    end
   end
 
   def list_all_books
     puts "\n"
-    books.each_with_index do |book, index|
+    @books.each_with_index do |book, index|
       puts "[#{index + 1}] Title: #{book.title}, Author: #{book.author}"
     end
   end
@@ -72,44 +81,57 @@ class App
     when 2
       create_teacher
     else
-      puts 'Invalid Selection. Returning to main menu'
+      puts 'Returning to main menu'
       nil
     end
     puts "Person created successfully\n\n"
   end
 
   def create_student
-    age = numeric(message: "Age:\s")
-    name = not_empty(message: "Name:\s")
-    loop do
-      print "Has parent permission [Y/N]?\s"
-      permission = gets.chomp
-      if %w[y Y].include?(permission)
-        student = Student.new(nil, age, name: name, parent_permission: true)
-        @people << student unless @people.include?(student)
-        break
-      elsif %w[n N].include?(permission)
-        student = Student.new(nil, age, name: name, parent_permission: false)
-        @people << student unless @people.include?(student)
-        break
-      end
+    print 'Age: '
+    age = gets.chomp.to_i
+    print 'Name: '
+    name = gets.chomp.strip.capitalize
+    print 'Has Parent Permission? [y/n]: '
+    permission = gets.chomp.strip.upcase
+    case permission
+    when 'y', 'Y'
+      permission = true
+    when 'n', 'N'
+      permission = false
     end
+    student = Student.new(@id, age, name, parent_permission: permission)
+    @people << student
+    puts 'Student created successfully'
+    restart
   end
 
   def create_teacher
-    age = numeric(message: "Age:\s")
-    name = not_empty(message: "Name:\s")
-    specialization = not_empty(message: "Specialization:\s")
-    teacher = Teacher.new(specialization, age, name: name)
-    @people << teacher unless @people.include?(teacher)
+    print 'Age: '
+    age = gets.chomp.to_i
+    if age <= 0
+      @id -= 1
+      return puts 'Invalid input, returning to main menu'
+    end
+    print 'Name: '
+    name = gets.chomp.strip.capitalize
+    print 'Specialization: '
+    specialization = gets.chomp.strip.capitalize
+    teacher = Teacher.new(@id, age, specialization, name)
+    @people << teacher
+    puts 'Teacher created successfully'
+    restart
   end
 
   def create_book
-    title = not_empty(message: "Title:\s")
-    author = not_empty(message: "Author:\s")
-    puts "Book created successfully \n\n"
+    print 'Title: '
+    title = gets.chomp.strip.capitalize
+    print 'Author: '
+    author = gets.chomp.strip.capitalize
     book = Book.new(title, author)
-    @books << book unless @books.include?(book)
+    @books << book
+    puts 'Book created successfully!'
+    restart
   end
 
   def create_rental
@@ -124,7 +146,6 @@ class App
     date = gets.chomp.strip
     Rental.new(date, @books[book_selected], @people[person_selected])
     puts 'Rental created successfully'
-    restart_app
   end
 
   def list_rentals
@@ -136,7 +157,7 @@ class App
 
       person.rentals.each do |rental|
         puts %(Date: #{rental.date}, Book \"#{rental.book.title}\" by #{rental.book.author})
-        restart_app
+        restart
       end
     end
   end
