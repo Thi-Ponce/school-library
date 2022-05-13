@@ -1,8 +1,15 @@
+require './book'
+require './student'
+require './teacher'
+require './person'
+
 class App
   include Inputs
   def initialize
     @persons = []
     @books = []
+    @book = nil
+    @person = nil
   end
   
   attr_accessor :persons, :books
@@ -63,6 +70,11 @@ class App
   end
 
   def create_book
+    title = not_empty(message: "Title:\s")
+    author = not_empty(message: "Author:\s")
+    puts "Book created successfully \n\n"
+    book = Book.new(title, author)
+    @books << book unless @books.include?(book)
   end
 
   def create_rental
