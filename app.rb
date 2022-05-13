@@ -6,13 +6,48 @@ require './person'
 class App
   include Inputs
   def initialize
-    @persons = []
+    @people = []
     @books = []
-    @book = nil
-    @person = nil
+    @id = 0
   end
   
   attr_accessor :persons, :books
+
+
+  def run
+    puts 'Welcome to School Library App!'
+    display_options
+
+    task_list = {
+      '1' => method(:list_all_books),
+      '2' => method(:list_all_people),
+      '3' => method(:create_person),
+      '4' => method(:create_book),
+      '5' => method(:create_rental),
+      '6' => method(:list_rentals)
+    }
+
+    task = gets.chomp
+    if task.to_i.positive? && task.to_i < 7
+      task_list[task].call
+    elsif task == '7'
+      puts 'Thank you for using this app!'
+    else
+      puts 'Please select a valid choice from the list'
+      run
+    end
+  end
+
+  def display_options
+    puts 'Please choose an option by entering a number:'
+    puts '1 - List all books'
+    puts '2 - List all people'
+    puts '3 - Create a person'
+    puts '4 - Create a book'
+    puts '5 - Create a rental'
+    puts '6 - List all rentals for a given person id'
+    puts '7 - Exit'
+  end
 
   def list_all_books
     puts "\n"
